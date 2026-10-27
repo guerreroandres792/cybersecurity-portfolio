@@ -1,6 +1,6 @@
 # Automatización de Revocación de Accesos de Red con Python
 
-## Resumen Ejecutivo
+## Resumen Ejecutivo.
 En entornos corporativos y operaciones de seguridad (SOC), la gestión manual de listas de control de acceso (ACL) representa un riesgo operativo crítico y una superficie de ataque latente debido a desvinculaciones o compromisos de endpoints.  
 Este proyecto implementa un script en Python que automatiza la lectura, comparación, depuración y actualización de un archivo de direcciones IP permitidas (`allow_list.txt`), aplicando el principio de mínimo privilegio de manera confiable.
 

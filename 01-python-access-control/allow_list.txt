@@ -1,0 +1,58 @@
+"""
+Script de Automatización de Control de Accesos (IAM / Seguridad de Red)
+Autor: Luis Andrés Guerrero
+Descripción:
+    Este script automatiza la actualización de una lista de direcciones IP autorizadas
+    (allow_list.txt). Identifica y elimina de forma sistemática aquellas IPs
+    que figuran en una lista de revocación (remove_list), previniendo accesos
+    no autorizados y eliminando el riesgo de error humano.
+"""
+
+def actualizar_lista_acceso(archivo_allow, lista_remover):
+    """
+    Lee un archivo de IPs permitidas, elimina las IPs indicadas y actualiza el archivo.
+    
+    Args:
+        archivo_allow (str): Ruta al archivo de texto con la lista de IPs autorizadas.
+        lista_remover (list): Lista de cadenas con las direcciones IP a revocar.
+    """
+    # 1. Apertura del archivo en modo lectura usando context manager
+    with open(archivo_allow, "r") as archivo:
+        # Lectura del contenido como una cadena de texto
+        contenido_ips = archivo.read()
+
+    # 2. Conversión de la cadena de texto en una lista de elementos individuales
+    ips_permitidas = contenido_ips.split()
+
+    # 3. Iteración y verificación de elementos a revocar
+    ips_eliminadas = []
+    for ip in lista_remover:
+        if ip in ips_permitidas:
+            ips_permitidas.remove(ip)
+            ips_eliminadas.append(ip)
+
+    # 4. Reconstrucción del formato (cadena delimitada por saltos de línea)
+    contenido_actualizado = "\n".join(ips_permitidas)
+
+    # 5. Reescribir el archivo original con los cambios aplicados
+    with open(archivo_allow, "w") as archivo:
+        archivo.write(contenido_actualizado)
+
+    # Registro en consola para trazabilidad y auditoría
+    print(f"[+] Proceso completado exitosamente.")
+    print(f"[i] IPs revocadas ({len(ips_eliminadas)}): {', '.join(ips_eliminadas)}")
+    print(f"[i] Total de IPs vigentes: {len(ips_permitidas)}")
+
+
+if __name__ == "__main__":
+    # Archivo objetivo que contiene la lista de acceso
+    ARCHIVO_OBJETIVO = "allow_list.txt"
+    
+    # Direcciones IP identificadas para revocación (ej. empleados desvinculados o IPs sospechosas)
+    IPS_A_REMOVER = [
+        "192.168.1.105",
+        "10.0.0.45",
+        "172.16.0.99"
+    ]
+
+    actualizar_lista_acceso(ARCHIVO_OBJETIVO, IPS_A_REMOVER)
